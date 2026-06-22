@@ -2,7 +2,9 @@
 
 namespace App\Filament\Owner\Resources\StockAdjustments;
 
-use App\Filament\Owner\Resources\StockAdjustments\Pages\ManageStockAdjustments;
+use App\Filament\Owner\Resources\StockAdjustments\Pages\CreateStockAdjustment;
+use App\Filament\Owner\Resources\StockAdjustments\Pages\EditStockAdjustment;
+use App\Filament\Owner\Resources\StockAdjustments\Pages\ListStockAdjustments;
 use App\Models\StockAdjustment;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -40,6 +42,7 @@ class StockAdjustmentResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 Section::make('Informasi Opname')
                     ->schema([
@@ -148,7 +151,9 @@ class StockAdjustmentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageStockAdjustments::route('/'),
+            'index' => ListStockAdjustments::route('/'),
+            'create' => CreateStockAdjustment::route('/create'),
+            'edit' => EditStockAdjustment::route('/{record}/edit'),
         ];
     }
 }

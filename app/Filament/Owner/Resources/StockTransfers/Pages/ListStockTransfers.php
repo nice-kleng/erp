@@ -3,17 +3,17 @@
 namespace App\Filament\Owner\Resources\StockTransfers\Pages;
 
 use App\Filament\Owner\Resources\StockTransfers\StockTransferResource;
-use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ManageRecords;
+use Filament\Actions;
+use Filament\Resources\Pages\ListRecords;
 
-class ManageStockTransfers extends ManageRecords
+class ListStockTransfers extends ListRecords
 {
     protected static string $resource = StockTransferResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }

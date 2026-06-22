@@ -2,7 +2,9 @@
 
 namespace App\Filament\Owner\Resources\StockTransfers;
 
-use App\Filament\Owner\Resources\StockTransfers\Pages\ManageStockTransfers;
+use App\Filament\Owner\Resources\StockTransfers\Pages\CreateStockTransfer;
+use App\Filament\Owner\Resources\StockTransfers\Pages\EditStockTransfer;
+use App\Filament\Owner\Resources\StockTransfers\Pages\ListStockTransfers;
 use App\Models\StockTransfer;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -25,6 +27,8 @@ class StockTransferResource extends Resource
 {
     protected static ?string $model = StockTransfer::class;
 
+    protected static ?string $tenantOwnershipRelationshipName = 'fromStore';
+
     public static function getNavigationIcon(): ?string
     {
         return 'heroicon-o-arrows-right-left';
@@ -40,6 +44,7 @@ class StockTransferResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 Section::make('Informasi Transfer')
                     ->schema([
@@ -163,7 +168,9 @@ class StockTransferResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageStockTransfers::route('/'),
+            'index' => ListStockTransfers::route('/'),
+            'create' => CreateStockTransfer::route('/create'),
+            'edit' => EditStockTransfer::route('/{record}/edit'),
         ];
     }
 }

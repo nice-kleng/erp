@@ -2,7 +2,9 @@
 
 namespace App\Filament\Owner\Resources\StockMovements;
 
-use App\Filament\Owner\Resources\StockMovements\Pages\ManageStockMovements;
+use App\Filament\Owner\Resources\StockMovements\Pages\CreateStockMovement;
+use App\Filament\Owner\Resources\StockMovements\Pages\EditStockMovement;
+use App\Filament\Owner\Resources\StockMovements\Pages\ListStockMovements;
 use App\Models\StockMovement;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -99,7 +101,9 @@ class StockMovementResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ManageStockMovements::route('/'),
+            'index' => ListStockMovements::route('/'),
+            'create' => CreateStockMovement::route('/create'),
+            'edit' => EditStockMovement::route('/{record}/edit'),
         ];
     }
 }
