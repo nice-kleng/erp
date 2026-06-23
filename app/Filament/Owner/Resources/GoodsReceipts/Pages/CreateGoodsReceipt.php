@@ -10,6 +10,13 @@ class CreateGoodsReceipt extends CreateRecord
 {
     protected static string $resource = GoodsReceiptResource::class;
 
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['created_by'] = auth()->id();
+
+        return $data;
+    }
+
     protected function afterCreate(): void
     {
         $record = $this->record;
