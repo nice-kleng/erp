@@ -5,20 +5,19 @@ namespace Database\Factories;
 use App\Models\ProductVariant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<ProductVariant>
- */
 class ProductVariantFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = ProductVariant::class;
+
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->randomElement(['Reguler', 'Large', 'Small', 'Jumbo']),
+            'sku' => strtoupper(fake()->bothify('????-####')),
+            'barcode' => fake()->ean13(),
+            'purchase_price' => fake()->numberBetween(5000, 50000),
+            'selling_price' => fake()->numberBetween(10000, 100000),
+            'is_active' => true,
         ];
     }
 }
