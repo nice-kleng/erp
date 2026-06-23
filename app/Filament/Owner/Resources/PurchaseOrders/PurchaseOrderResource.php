@@ -85,22 +85,29 @@ class PurchaseOrderResource extends Resource
                                     ->preload()
                                     ->required()
                                     ->live()
-                                    ->afterStateUpdated(function ($state, $set) {
+                                    ->afterStateUpdated(function ($state, $set, $get) {
                                         $product = Product::find($state);
                                         if ($product) {
                                             $set('unit_price', $product->purchase_price);
+                                            $set('subtotal', $product->purchase_price * ($get('qty_ordered') ?? 1));
                                         }
                                     }),
                                 TextInput::make('qty_ordered')
                                     ->label('Qty')
                                     ->required()
                                     ->numeric()
-                                    ->default(1),
+                                    ->default(1)
+                                    ->live()
+                                    ->afterStateUpdated(fn ($state, $set, $get) => $set('subtotal', ($state ?? 0) * ($get('unit_price') ?? 0))
+                                    ),
                                 TextInput::make('unit_price')
                                     ->label('Harga')
                                     ->required()
                                     ->numeric()
-                                    ->prefix('Rp'),
+                                    ->prefix('Rp')
+                                    ->live()
+                                    ->afterStateUpdated(fn ($state, $set, $get) => $set('subtotal', ($state ?? 0) * ($get('qty_ordered') ?? 1))
+                                    ),
                                 TextInput::make('subtotal')
                                     ->required()
                                     ->numeric()
