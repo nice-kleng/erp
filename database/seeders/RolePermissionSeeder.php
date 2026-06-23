@@ -11,7 +11,8 @@ class RolePermissionSeeder extends Seeder
     public function run(): void
     {
         $masterDataEntities = ['Category', 'Product', 'Unit', 'Supplier', 'Customer'];
-        $inventoryEntities = ['PurchaseOrder', 'GoodsReceipt', 'StockTransfer', 'StockAdjustment', 'StockMovement'];
+        $inventoryEntities = ['PurchaseOrder', 'GoodsReceipt', 'StockTransfer', 'StockAdjustment'];
+        $readOnlyEntities = ['StockMovement'];
         $apEntities = ['AccountPayable', 'ApPayment'];
 
         $ownerRole = Role::firstOrCreate(['name' => 'owner', 'guard_name' => 'web']);
@@ -44,6 +45,18 @@ class RolePermissionSeeder extends Seeder
                 "Update:{$entity}",
                 "Delete:{$entity}",
                 "DeleteAny:{$entity}",
+            ]);
+
+            $staffPermissions = array_merge($staffPermissions, [
+                "ViewAny:{$entity}",
+                "View:{$entity}",
+            ]);
+        }
+
+        foreach ($readOnlyEntities as $entity) {
+            $ownerPermissions = array_merge($ownerPermissions, [
+                "ViewAny:{$entity}",
+                "View:{$entity}",
             ]);
 
             $staffPermissions = array_merge($staffPermissions, [

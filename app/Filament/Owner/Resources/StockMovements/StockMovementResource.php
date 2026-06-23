@@ -2,16 +2,9 @@
 
 namespace App\Filament\Owner\Resources\StockMovements;
 
-use App\Filament\Owner\Resources\StockMovements\Pages\CreateStockMovement;
-use App\Filament\Owner\Resources\StockMovements\Pages\EditStockMovement;
 use App\Filament\Owner\Resources\StockMovements\Pages\ListStockMovements;
 use App\Models\StockMovement;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -31,29 +24,6 @@ class StockMovementResource extends Resource
     }
 
     protected static ?int $navigationSort = 3;
-
-    public static function form(Schema $schema): Schema
-    {
-        return $schema
-            ->columns(1)
-            ->components([
-                Section::make('Informasi Pergerakan')
-                    ->schema([
-                        Select::make('type')
-                            ->options([
-                                'in' => 'Masuk',
-                                'out' => 'Keluar',
-                                'adjustment' => 'Penyesuaian',
-                            ])
-                            ->required(),
-                        TextInput::make('qty')
-                            ->required()
-                            ->numeric(),
-                        Textarea::make('description')
-                            ->columnSpanFull(),
-                    ]),
-            ]);
-    }
 
     public static function table(Table $table): Table
     {
@@ -107,8 +77,6 @@ class StockMovementResource extends Resource
     {
         return [
             'index' => ListStockMovements::route('/'),
-            'create' => CreateStockMovement::route('/create'),
-            'edit' => EditStockMovement::route('/{record}/edit'),
         ];
     }
 }
