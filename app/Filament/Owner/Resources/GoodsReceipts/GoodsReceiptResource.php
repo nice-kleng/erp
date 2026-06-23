@@ -83,7 +83,8 @@ class GoodsReceiptResource extends Resource
                                     ->label('Qty')
                                     ->required()
                                     ->numeric()
-                                    ->default(1),
+                                    ->default(1)
+                                    ->minValue(1),
                                 TextInput::make('unit_price')
                                     ->label('Harga')
                                     ->required()
