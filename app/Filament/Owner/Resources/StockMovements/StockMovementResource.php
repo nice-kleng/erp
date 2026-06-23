@@ -10,6 +10,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -34,19 +35,23 @@ class StockMovementResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
-                Select::make('type')
-                    ->options([
-                        'in' => 'Masuk',
-                        'out' => 'Keluar',
-                        'adjustment' => 'Penyesuaian',
-                    ])
-                    ->required(),
-                TextInput::make('qty')
-                    ->required()
-                    ->numeric(),
-                Textarea::make('description')
-                    ->columnSpanFull(),
+                Section::make('Informasi Pergerakan')
+                    ->schema([
+                        Select::make('type')
+                            ->options([
+                                'in' => 'Masuk',
+                                'out' => 'Keluar',
+                                'adjustment' => 'Penyesuaian',
+                            ])
+                            ->required(),
+                        TextInput::make('qty')
+                            ->required()
+                            ->numeric(),
+                        Textarea::make('description')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
