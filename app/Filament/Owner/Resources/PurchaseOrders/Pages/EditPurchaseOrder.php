@@ -16,4 +16,11 @@ class EditPurchaseOrder extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function afterSave(): void
+    {
+        $this->record->update([
+            'total' => $this->record->items->sum('subtotal'),
+        ]);
+    }
 }

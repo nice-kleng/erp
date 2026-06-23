@@ -15,4 +15,11 @@ class CreatePurchaseOrder extends CreateRecord
 
         return $data;
     }
+
+    protected function afterCreate(): void
+    {
+        $this->record->update([
+            'total' => $this->record->items->sum('subtotal'),
+        ]);
+    }
 }
