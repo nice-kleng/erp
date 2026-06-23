@@ -13,15 +13,16 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         $name = fake()->unique()->randomElement([
-            'Kopi Hitam', 'Kopi Susu', 'Cappuccino', 'Espresso',
-            'Matcha Latte', 'Coklat Panas', 'Kopi Tubruk',
-            'Nasi Goreng', 'Mie Ayam', 'Ayam Geprek',
-            'Nasi Putih', 'French Fries', 'Onion Ring',
-            'Cheesecake', 'Pisang Goreng', 'Lumpia',
-            'Air Mineral', 'Susu Segar', 'Jus Jeruk', 'Jus Alpukat',
-            'Es Teh Manis', 'Es Jeruk', 'Teh Tarik',
-            'Bubble', 'Nata de Coco', 'Grass Jelly',
-            'Paket Nasi + Minum', 'Paket Snack + Minum',
+            'Air Mineral 600ml 1 Dus (isi 24)', 'Air Mineral 1500ml 1 Dus (isi 12)',
+            'Teh Kotak 1 Dus (isi 24)', 'Mi Instan 1 Dus (isi 40)',
+            'Biskuit Roma Kelapa 1 Pack', 'Biskuit Roma Sandwich 1 Pack',
+            'Beras 5kg', 'Beras 25kg', 'Gula Pasir 1kg',
+            'Minyak Goreng 2L', 'Telur Ayam 1kg',
+            'Kopi Saset 1 Renteng (isi 24)', 'Teh Celup 1 Box (isi 100)',
+            'Susu Kental Manis 1 Kaleng',
+            'Kecap Manis 600ml', 'Saos Sambal 600ml',
+            'Sabun Mandi 1 Pack (isi 3)', 'Shampoo Saset 1 Pack (isi 12)',
+            'Deterjen Bubuk 1kg', 'Sabun Cuci Piring 500ml', 'Pasta Gigi 190gr',
         ]);
 
         return [
@@ -30,8 +31,8 @@ class ProductFactory extends Factory
             'description' => fake()->sentence(),
             'sku' => strtoupper(fake()->bothify('SKU-####')),
             'barcode' => fake()->ean13(),
-            'purchase_price' => fake()->numberBetween(3000, 30000),
-            'selling_price' => fake()->numberBetween(7000, 75000),
+            'purchase_price' => fake()->numberBetween(5000, 150000),
+            'selling_price' => fake()->numberBetween(10000, 200000),
             'has_variants' => false,
             'is_active' => true,
         ];

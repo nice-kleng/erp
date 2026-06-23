@@ -13,13 +13,15 @@ class UnitFactory extends Factory
     {
         $units = [
             ['name' => 'Pcs', 'abbreviation' => 'pcs'],
-            ['name' => 'Porsi', 'abbreviation' => 'prs'],
-            ['name' => 'Cup', 'abbreviation' => 'cup'],
-            ['name' => 'Gelas', 'abbreviation' => 'gls'],
-            ['name' => 'Kilogram', 'abbreviation' => 'kg'],
-            ['name' => 'Gram', 'abbreviation' => 'gr'],
-            ['name' => 'Liter', 'abbreviation' => 'ltr'],
+            ['name' => 'Dus', 'abbreviation' => 'dus'],
             ['name' => 'Pack', 'abbreviation' => 'pack'],
+            ['name' => 'Bungkus', 'abbreviation' => 'bks'],
+            ['name' => 'Botol', 'abbreviation' => 'btl'],
+            ['name' => 'Saset', 'abbreviation' => 'sst'],
+            ['name' => 'Kaleng', 'abbreviation' => 'klg'],
+            ['name' => 'Slop', 'abbreviation' => 'slop'],
+            ['name' => 'Kilogram', 'abbreviation' => 'kg'],
+            ['name' => 'Liter', 'abbreviation' => 'ltr'],
         ];
 
         $unit = fake()->unique()->randomElement($units);

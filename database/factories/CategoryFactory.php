@@ -13,7 +13,7 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         $name = fake()->unique()->randomElement([
-            'Minuman', 'Makanan', 'Snack', 'Topping', 'Bahan Baku', 'Paket',
+            'Minuman', 'Makanan Ringan', 'Sembako', 'Bumbu & Saus', 'Produk Rumah Tangga', 'Rokok',
         ]);
 
         return [

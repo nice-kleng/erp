@@ -36,12 +36,12 @@ class MasterDataSeeder extends Seeder
     private function seedCategories(int $storeId): void
     {
         $categories = [
-            ['name' => 'Minuman', 'description' => 'Minuman dingin & panas'],
-            ['name' => 'Makanan', 'description' => 'Makanan berat & ringan'],
-            ['name' => 'Snack', 'description' => 'Camilan & gorengan'],
-            ['name' => 'Topping', 'description' => 'Tambahan topping minuman'],
-            ['name' => 'Bahan Baku', 'description' => 'Bahan baku produksi'],
-            ['name' => 'Paket', 'description' => 'Paket hemat & combo'],
+            ['name' => 'Minuman', 'description' => 'Air mineral, teh, susu, kopi, minuman ringan'],
+            ['name' => 'Makanan Ringan', 'description' => 'Mi instan, biskuit, permen, snack'],
+            ['name' => 'Sembako', 'description' => 'Beras, gula, minyak, telur, kebutuhan pokok'],
+            ['name' => 'Bumbu & Saus', 'description' => 'Kecap, saos sambal, bumbu masak'],
+            ['name' => 'Produk Rumah Tangga', 'description' => 'Sabun, deterjen, shampoo, pasta gigi'],
+            ['name' => 'Rokok', 'description' => 'Rokok kretek & filter'],
         ];
 
         foreach ($categories as $data) {
@@ -61,13 +61,15 @@ class MasterDataSeeder extends Seeder
     {
         $units = [
             ['name' => 'Pcs', 'abbreviation' => 'pcs'],
-            ['name' => 'Porsi', 'abbreviation' => 'prs'],
-            ['name' => 'Cup', 'abbreviation' => 'cup'],
-            ['name' => 'Gelas', 'abbreviation' => 'gls'],
-            ['name' => 'Kilogram', 'abbreviation' => 'kg'],
-            ['name' => 'Gram', 'abbreviation' => 'gr'],
-            ['name' => 'Liter', 'abbreviation' => 'ltr'],
+            ['name' => 'Dus', 'abbreviation' => 'dus'],
             ['name' => 'Pack', 'abbreviation' => 'pack'],
+            ['name' => 'Bungkus', 'abbreviation' => 'bks'],
+            ['name' => 'Botol', 'abbreviation' => 'btl'],
+            ['name' => 'Saset', 'abbreviation' => 'sst'],
+            ['name' => 'Kaleng', 'abbreviation' => 'klg'],
+            ['name' => 'Slop', 'abbreviation' => 'slop'],
+            ['name' => 'Kilogram', 'abbreviation' => 'kg'],
+            ['name' => 'Liter', 'abbreviation' => 'ltr'],
         ];
 
         foreach ($units as $data) {
@@ -85,10 +87,11 @@ class MasterDataSeeder extends Seeder
     private function seedSuppliers(int $storeId): void
     {
         $suppliers = [
-            ['name' => 'PT Sumber Makmur', 'phone' => '021-5550001', 'email' => 'info@sumbermakmur.co.id', 'city' => 'Jakarta'],
-            ['name' => 'CV Jaya Abadi', 'phone' => '021-5550002', 'email' => 'order@jayaabadi.co.id', 'city' => 'Jakarta'],
-            ['name' => 'UD Boga Rasa', 'phone' => '022-5550003', 'email' => 'sales@bogarasa.com', 'city' => 'Bandung'],
-            ['name' => 'PT Segar Sentosa', 'phone' => '031-5550004', 'email' => 'info@segarsentosa.co.id', 'city' => 'Surabaya'],
+            ['name' => 'PT Indofood Sukses Makmur', 'phone' => '021-57951122', 'email' => 'sales@indofood.co.id', 'city' => 'Jakarta'],
+            ['name' => 'PT Unilever Indonesia', 'phone' => '021-80828900', 'email' => 'order@unilever.co.id', 'city' => 'Jakarta'],
+            ['name' => 'PT Mayora Indah', 'phone' => '021-80627000', 'email' => 'info@mayora.co.id', 'city' => 'Jakarta'],
+            ['name' => 'CV Sinar Jaya', 'phone' => '021-5550004', 'email' => 'sinarjaya@gmail.com', 'city' => 'Jakarta'],
+            ['name' => 'UD Sumber Rejeki', 'phone' => '031-5550005', 'email' => 'sumberrejeki@yahoo.com', 'city' => 'Surabaya'],
         ];
 
         foreach ($suppliers as $data) {
@@ -137,123 +140,135 @@ class MasterDataSeeder extends Seeder
 
         $products = [
             [
-                'name' => 'Kopi Hitam',
-                'category' => 'Minuman', 'unit' => 'Cup',
-                'purchase_price' => 3000, 'selling_price' => 10000,
-                'variants' => ['Reguler', 'Large'],
-            ],
-            [
-                'name' => 'Kopi Susu',
-                'category' => 'Minuman', 'unit' => 'Cup',
-                'purchase_price' => 5000, 'selling_price' => 15000,
-                'variants' => ['Reguler', 'Large'],
-            ],
-            [
-                'name' => 'Cappuccino',
-                'category' => 'Minuman', 'unit' => 'Cup',
-                'purchase_price' => 7000, 'selling_price' => 20000,
-                'variants' => ['Reguler', 'Large'],
-            ],
-            [
-                'name' => 'Matcha Latte',
-                'category' => 'Minuman', 'unit' => 'Cup',
-                'purchase_price' => 8000, 'selling_price' => 22000,
-                'variants' => ['Reguler', 'Large'],
-            ],
-            [
-                'name' => 'Coklat Panas',
-                'category' => 'Minuman', 'unit' => 'Cup',
-                'purchase_price' => 5000, 'selling_price' => 18000,
+                'name' => 'Air Mineral 600ml 1 Dus (isi 24)',
+                'category' => 'Minuman', 'unit' => 'Dus',
+                'purchase_price' => 25000, 'selling_price' => 35000,
                 'variants' => null,
             ],
             [
-                'name' => 'Es Teh Manis',
-                'category' => 'Minuman', 'unit' => 'Gelas',
-                'purchase_price' => 2000, 'selling_price' => 7000,
-                'variants' => ['Reguler', 'Large'],
-            ],
-            [
-                'name' => 'Jus Jeruk',
-                'category' => 'Minuman', 'unit' => 'Gelas',
-                'purchase_price' => 4000, 'selling_price' => 12000,
-                'variants' => ['Reguler', 'Large'],
-            ],
-            [
-                'name' => 'Air Mineral',
-                'category' => 'Minuman', 'unit' => 'Gelas',
-                'purchase_price' => 1000, 'selling_price' => 4000,
+                'name' => 'Air Mineral 1500ml 1 Dus (isi 12)',
+                'category' => 'Minuman', 'unit' => 'Dus',
+                'purchase_price' => 28000, 'selling_price' => 38000,
                 'variants' => null,
             ],
             [
-                'name' => 'Nasi Goreng',
-                'category' => 'Makanan', 'unit' => 'Porsi',
-                'purchase_price' => 8000, 'selling_price' => 25000,
+                'name' => 'Teh Kotak 1 Dus (isi 24)',
+                'category' => 'Minuman', 'unit' => 'Dus',
+                'purchase_price' => 42000, 'selling_price' => 55000,
                 'variants' => null,
             ],
             [
-                'name' => 'Mie Ayam',
-                'category' => 'Makanan', 'unit' => 'Porsi',
-                'purchase_price' => 6000, 'selling_price' => 20000,
+                'name' => 'Mi Instan 1 Dus (isi 40)',
+                'category' => 'Makanan Ringan', 'unit' => 'Dus',
+                'purchase_price' => 85000, 'selling_price' => 110000,
+                'variants' => ['Ayam Bawang', 'Kari', 'Soto'],
+            ],
+            [
+                'name' => 'Biskuit Roma Kelapa 1 Pack',
+                'category' => 'Makanan Ringan', 'unit' => 'Pack',
+                'purchase_price' => 6500, 'selling_price' => 10000,
                 'variants' => null,
             ],
             [
-                'name' => 'Ayam Geprek',
-                'category' => 'Makanan', 'unit' => 'Porsi',
-                'purchase_price' => 10000, 'selling_price' => 28000,
+                'name' => 'Biskuit Roma Sandwich 1 Pack',
+                'category' => 'Makanan Ringan', 'unit' => 'Pack',
+                'purchase_price' => 7500, 'selling_price' => 11500,
                 'variants' => null,
             ],
             [
-                'name' => 'Nasi Putih',
-                'category' => 'Makanan', 'unit' => 'Porsi',
-                'purchase_price' => 3000, 'selling_price' => 8000,
+                'name' => 'Beras 5kg',
+                'category' => 'Sembako', 'unit' => 'Pcs',
+                'purchase_price' => 55000, 'selling_price' => 68000,
                 'variants' => null,
             ],
             [
-                'name' => 'French Fries',
-                'category' => 'Snack', 'unit' => 'Porsi',
-                'purchase_price' => 5000, 'selling_price' => 15000,
-                'variants' => ['Small', 'Large'],
-            ],
-            [
-                'name' => 'Onion Ring',
-                'category' => 'Snack', 'unit' => 'Porsi',
-                'purchase_price' => 5000, 'selling_price' => 15000,
+                'name' => 'Beras 25kg',
+                'category' => 'Sembako', 'unit' => 'Pcs',
+                'purchase_price' => 250000, 'selling_price' => 310000,
                 'variants' => null,
             ],
             [
-                'name' => 'Pisang Goreng',
-                'category' => 'Snack', 'unit' => 'Porsi',
-                'purchase_price' => 3000, 'selling_price' => 10000,
+                'name' => 'Gula Pasir 1kg',
+                'category' => 'Sembako', 'unit' => 'Pcs',
+                'purchase_price' => 14000, 'selling_price' => 18000,
                 'variants' => null,
             ],
             [
-                'name' => 'Cheesecake',
-                'category' => 'Snack', 'unit' => 'Pcs',
-                'purchase_price' => 8000, 'selling_price' => 25000,
+                'name' => 'Minyak Goreng 2L',
+                'category' => 'Sembako', 'unit' => 'Botol',
+                'purchase_price' => 28000, 'selling_price' => 36000,
                 'variants' => null,
             ],
             [
-                'name' => 'Bubble',
-                'category' => 'Topping', 'unit' => 'Porsi',
-                'purchase_price' => 2000, 'selling_price' => 5000,
+                'name' => 'Telur Ayam 1kg',
+                'category' => 'Sembako', 'unit' => 'Pcs',
+                'purchase_price' => 22000, 'selling_price' => 28000,
                 'variants' => null,
             ],
             [
-                'name' => 'Nata de Coco',
-                'category' => 'Topping', 'unit' => 'Porsi',
-                'purchase_price' => 2000, 'selling_price' => 5000,
+                'name' => 'Kopi Saset 1 Renteng (isi 24)',
+                'category' => 'Minuman', 'unit' => 'Pack',
+                'purchase_price' => 15000, 'selling_price' => 22000,
+                'variants' => ['Original', 'Susu'],
+            ],
+            [
+                'name' => 'Teh Celup 1 Box (isi 100)',
+                'category' => 'Minuman', 'unit' => 'Dus',
+                'purchase_price' => 18000, 'selling_price' => 25000,
                 'variants' => null,
             ],
             [
-                'name' => 'Paket Nasi + Minum',
-                'category' => 'Paket', 'unit' => 'Pack',
-                'purchase_price' => 12000, 'selling_price' => 35000,
+                'name' => 'Susu Kental Manis 1 Kaleng',
+                'category' => 'Minuman', 'unit' => 'Kaleng',
+                'purchase_price' => 10000, 'selling_price' => 14000,
                 'variants' => null,
             ],
             [
-                'name' => 'Paket Snack + Minum',
-                'category' => 'Paket', 'unit' => 'Pack',
-                'purchase_price' => 10000, 'selling_price' => 30000,
+                'name' => 'Kecap Manis 600ml',
+                'category' => 'Bumbu & Saus', 'unit' => 'Botol',
+                'purchase_price' => 15000, 'selling_price' => 22000,
+                'variants' => null,
+            ],
+            [
+                'name' => 'Saos Sambal 600ml',
+                'category' => 'Bumbu & Saus', 'unit' => 'Botol',
+                'purchase_price' => 13000, 'selling_price' => 20000,
+                'variants' => null,
+            ],
+            [
+                'name' => 'Sabun Mandi 1 Pack (isi 3)',
+                'category' => 'Produk Rumah Tangga', 'unit' => 'Pack',
+                'purchase_price' => 18000, 'selling_price' => 25000,
+                'variants' => null,
+            ],
+            [
+                'name' => 'Shampoo Saset 1 Pack (isi 12)',
+                'category' => 'Produk Rumah Tangga', 'unit' => 'Pack',
+                'purchase_price' => 8000, 'selling_price' => 12000,
+                'variants' => null,
+            ],
+            [
+                'name' => 'Deterjen Bubuk 1kg',
+                'category' => 'Produk Rumah Tangga', 'unit' => 'Pcs',
+                'purchase_price' => 16000, 'selling_price' => 23000,
+                'variants' => null,
+            ],
+            [
+                'name' => 'Sabun Cuci Piring 500ml',
+                'category' => 'Produk Rumah Tangga', 'unit' => 'Botol',
+                'purchase_price' => 10000, 'selling_price' => 15000,
+                'variants' => null,
+            ],
+            [
+                'name' => 'Pasta Gigi 190gr',
+                'category' => 'Produk Rumah Tangga', 'unit' => 'Pcs',
+                'purchase_price' => 12000, 'selling_price' => 17000,
+                'variants' => null,
+            ],
+            [
+                'name' => 'Rokok Kretek 1 Slop (isi 10)',
+                'category' => 'Rokok', 'unit' => 'Slop',
+                'purchase_price' => 180000, 'selling_price' => 220000,
                 'variants' => null,
             ],
         ];
@@ -278,14 +293,13 @@ class MasterDataSeeder extends Seeder
 
             if ($data['variants']) {
                 foreach ($data['variants'] as $variantName) {
-                    $priceMultiplier = $variantName === 'Large' || $variantName === 'Jumbo' ? 1.3 : 1;
                     ProductVariant::create([
                         'product_id' => $product->id,
                         'name' => $variantName,
                         'sku' => strtoupper(fake()->bothify('SKU-####')),
                         'barcode' => fake()->ean13(),
-                        'purchase_price' => (int) round($data['purchase_price'] * $priceMultiplier),
-                        'selling_price' => (int) round($data['selling_price'] * $priceMultiplier),
+                        'purchase_price' => $data['purchase_price'],
+                        'selling_price' => $data['selling_price'],
                         'is_active' => true,
                     ]);
                 }
