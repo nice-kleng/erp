@@ -19,8 +19,15 @@ class EditPurchaseOrder extends EditRecord
 
     protected function afterSave(): void
     {
+        $subtotal = $this->record->items->sum('subtotal');
+        $discount = (float) ($this->data['discount'] ?? 0);
+        $tax = (float) ($this->data['tax'] ?? 0);
+
         $this->record->update([
-            'total' => $this->record->items->sum('subtotal'),
+            'subtotal' => $subtotal,
+            'discount' => $discount,
+            'tax' => $tax,
+            'total' => $subtotal - $discount + $tax,
         ]);
     }
 }

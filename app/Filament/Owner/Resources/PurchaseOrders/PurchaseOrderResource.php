@@ -117,6 +117,34 @@ class PurchaseOrderResource extends Resource
                             ->columns(4)
                             ->defaultItems(1),
                     ]),
+
+                Section::make('Ringkasan')
+                    ->schema([
+                        TextInput::make('subtotal')
+                            ->required()
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->readOnly(),
+                        TextInput::make('discount')
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->default(0)
+                            ->live()
+                            ->afterStateUpdated(fn ($state, $set, $get) => $set('total', ((float) ($get('subtotal') ?? 0)) - ((float) ($state ?? 0)) + ((float) ($get('tax') ?? 0)))
+                            ),
+                        TextInput::make('tax')
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->default(0)
+                            ->live()
+                            ->afterStateUpdated(fn ($state, $set, $get) => $set('total', ((float) ($get('subtotal') ?? 0)) - ((float) ($get('discount') ?? 0)) + ((float) ($state ?? 0)))
+                            ),
+                        TextInput::make('total')
+                            ->required()
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->readOnly(),
+                    ])->columns(4),
             ]);
     }
 
