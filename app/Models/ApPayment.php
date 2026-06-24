@@ -32,4 +32,36 @@ class ApPayment extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    protected function casts(): array
+    {
+        return [
+            'amount' => 'decimal:2',
+            'payment_date' => 'date',
+        ];
+    }
+
+    protected static function booted(): void
+    {
+        static::deleted(function (ApPayment $payment) {
+            $ap = $payment->accountPayable;
+            if (! $ap) {
+                return;
+            }
+
+            $totalPaid = (float) $ap->payments()->sum('amount');
+            $totalAmount = (float) $ap->total_amount;
+
+            $status = match (true) {
+                $totalPaid >= $totalAmount => 'paid',
+                $totalPaid > 0 => 'partial',
+                default => 'unpaid',
+            };
+
+            $ap->update([
+                'amount_paid' => $totalPaid,
+                'status' => $status,
+            ]);
+        });
+    }
 }

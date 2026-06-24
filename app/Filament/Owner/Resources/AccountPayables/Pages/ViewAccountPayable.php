@@ -3,9 +3,9 @@
 namespace App\Filament\Owner\Resources\AccountPayables\Pages;
 
 use App\Filament\Owner\Resources\AccountPayables\AccountPayableResource;
-use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\ViewRecord;
 
-class CreateAccountPayable extends CreateRecord
+class ViewAccountPayable extends ViewRecord
 {
     protected static string $resource = AccountPayableResource::class;
 }

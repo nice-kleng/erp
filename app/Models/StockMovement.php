@@ -21,6 +21,14 @@ class StockMovement extends Model
         'created_by',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'qty' => 'decimal:2',
+            'unit_price' => 'decimal:2',
+        ];
+    }
+
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);

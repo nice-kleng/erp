@@ -5,6 +5,7 @@ namespace App\Filament\Owner\Resources\ApPayments;
 use App\Filament\Owner\Resources\ApPayments\Pages\CreateApPayment;
 use App\Filament\Owner\Resources\ApPayments\Pages\EditApPayment;
 use App\Filament\Owner\Resources\ApPayments\Pages\ListApPayments;
+use App\Models\AccountPayable;
 use App\Models\ApPayment;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -49,12 +50,44 @@ class ApPaymentResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->label('Hutang'),
+                            ->label('Hutang')
+                            ->live(true)
+                            ->afterStateUpdated(function ($state, $set) {
+                                if (! $state) {
+                                    return;
+                                }
+
+                                $ap = AccountPayable::find($state);
+
+                                if (! $ap) {
+                                    return;
+                                }
+
+                                $set('amount', $ap->balance);
+                            })
+                            ->getOptionLabelFromRecordUsing(fn (AccountPayable $record): string => $record->ap_number.' — Rp '.number_format($record->balance, 0, ',', '.')),
                         TextInput::make('amount')
                             ->required()
                             ->numeric()
                             ->prefix('Rp')
-                            ->maxValue(99999999999999),
+                            ->maxValue(99999999999999)
+                            ->rules([
+                                fn ($get): \Closure => function (string $attribute, $value, \Closure $fail) use ($get) {
+                                    $apId = $get('account_payable_id');
+                                    if (! $apId) {
+                                        return;
+                                    }
+
+                                    $ap = AccountPayable::find($apId);
+                                    if (! $ap) {
+                                        return;
+                                    }
+
+                                    if ((float) $value > (float) $ap->balance) {
+                                        $fail("Jumlah pembayaran ({$value}) melebihi sisa hutang (".$ap->balance.').');
+                                    }
+                                },
+                            ]),
                         DatePicker::make('payment_date')
                             ->required()
                             ->default(now()),

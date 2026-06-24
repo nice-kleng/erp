@@ -16,4 +16,31 @@ class EditApPayment extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function afterSave(): void
+    {
+        $this->syncAccountPayable();
+    }
+
+    private function syncAccountPayable(): void
+    {
+        $ap = $this->record->accountPayable;
+        if (! $ap) {
+            return;
+        }
+
+        $totalPaid = (float) $ap->payments()->sum('amount');
+        $totalAmount = (float) $ap->total_amount;
+
+        $status = match (true) {
+            $totalPaid >= $totalAmount => 'paid',
+            $totalPaid > 0 => 'partial',
+            default => 'unpaid',
+        };
+
+        $ap->update([
+            'amount_paid' => $totalPaid,
+            'status' => $status,
+        ]);
+    }
 }

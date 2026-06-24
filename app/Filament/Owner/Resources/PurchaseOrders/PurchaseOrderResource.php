@@ -7,6 +7,7 @@ use App\Filament\Owner\Resources\PurchaseOrders\Pages\EditPurchaseOrder;
 use App\Filament\Owner\Resources\PurchaseOrders\Pages\ListPurchaseOrders;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -78,6 +79,8 @@ class PurchaseOrderResource extends Resource
                     ->schema([
                         Repeater::make('items')
                             ->relationship()
+                            ->live()
+                            ->afterStateUpdated(fn ($state, $set, $get, $livewire) => $livewire->syncRingkasan())
                             ->schema([
                                 Select::make('product_id')
                                     ->relationship('product', 'name')
@@ -85,12 +88,13 @@ class PurchaseOrderResource extends Resource
                                     ->preload()
                                     ->required()
                                     ->live()
-                                    ->afterStateUpdated(function ($state, $set, $get) {
+                                    ->afterStateUpdated(function ($state, $set, $get, $livewire) {
                                         $product = Product::find($state);
                                         if ($product) {
                                             $set('unit_price', $product->purchase_price);
                                             $set('subtotal', $product->purchase_price * ($get('qty_ordered') ?? 1));
                                         }
+                                        $livewire->syncRingkasan();
                                     }),
                                 TextInput::make('qty_ordered')
                                     ->label('Qty')
@@ -98,16 +102,20 @@ class PurchaseOrderResource extends Resource
                                     ->numeric()
                                     ->default(1)
                                     ->live()
-                                    ->afterStateUpdated(fn ($state, $set, $get) => $set('subtotal', ($state ?? 0) * ($get('unit_price') ?? 0))
-                                    ),
+                                    ->afterStateUpdated(function ($state, $set, $get, $livewire) {
+                                        $set('subtotal', ($state ?? 0) * ($get('unit_price') ?? 0));
+                                        $livewire->syncRingkasan();
+                                    }),
                                 TextInput::make('unit_price')
                                     ->label('Harga')
                                     ->required()
                                     ->numeric()
                                     ->prefix('Rp')
                                     ->live()
-                                    ->afterStateUpdated(fn ($state, $set, $get) => $set('subtotal', ($state ?? 0) * ($get('qty_ordered') ?? 1))
-                                    ),
+                                    ->afterStateUpdated(function ($state, $set, $get, $livewire) {
+                                        $set('subtotal', ($state ?? 0) * ($get('qty_ordered') ?? 1));
+                                        $livewire->syncRingkasan();
+                                    }),
                                 TextInput::make('subtotal')
                                     ->required()
                                     ->numeric()
@@ -124,7 +132,8 @@ class PurchaseOrderResource extends Resource
                             ->required()
                             ->numeric()
                             ->prefix('Rp')
-                            ->readOnly(),
+                            ->readOnly()
+                            ->live(true),
                         TextInput::make('discount')
                             ->numeric()
                             ->prefix('Rp')
@@ -203,6 +212,18 @@ class PurchaseOrderResource extends Resource
                     ]),
             ])
             ->recordActions([
+                Action::make('markAsOrdered')
+                    ->label('Kirim PO')
+                    ->icon('heroicon-o-paper-airplane')
+                    ->color('warning')
+                    ->visible(fn (PurchaseOrder $record): bool => $record->status === 'draft')
+                    ->requiresConfirmation()
+                    ->modalHeading('Kirim Purchase Order')
+                    ->modalDescription('Apakah Anda yakin ingin mengirim PO ini ke supplier? Status akan berubah menjadi "Dipesan".')
+                    ->action(fn (PurchaseOrder $record) => $record->update([
+                        'status' => 'ordered',
+                        'ordered_at' => now(),
+                    ])),
                 EditAction::make(),
                 DeleteAction::make(),
             ])

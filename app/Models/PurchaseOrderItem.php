@@ -18,6 +18,16 @@ class PurchaseOrderItem extends Model
         'subtotal',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'qty_ordered' => 'decimal:2',
+            'qty_received' => 'decimal:2',
+            'unit_price' => 'decimal:2',
+            'subtotal' => 'decimal:2',
+        ];
+    }
+
     public function purchaseOrder(): BelongsTo
     {
         return $this->belongsTo(PurchaseOrder::class);

@@ -23,6 +23,18 @@ class PurchaseOrder extends Model
         'created_by',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'subtotal' => 'decimal:2',
+            'tax' => 'decimal:2',
+            'discount' => 'decimal:2',
+            'total' => 'decimal:2',
+            'ordered_at' => 'date',
+            'expected_at' => 'date',
+        ];
+    }
+
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);

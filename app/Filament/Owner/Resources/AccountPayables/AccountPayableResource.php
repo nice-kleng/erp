@@ -2,25 +2,20 @@
 
 namespace App\Filament\Owner\Resources\AccountPayables;
 
-use App\Filament\Owner\Resources\AccountPayables\Pages\CreateAccountPayable;
-use App\Filament\Owner\Resources\AccountPayables\Pages\EditAccountPayable;
 use App\Filament\Owner\Resources\AccountPayables\Pages\ListAccountPayables;
+use App\Filament\Owner\Resources\AccountPayables\Pages\ViewAccountPayable;
 use App\Models\AccountPayable;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\TextSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Support\Str;
 
 class AccountPayableResource extends Resource
 {
@@ -40,52 +35,122 @@ class AccountPayableResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-    public static function form(Schema $schema): Schema
+    public static function infolist(Schema $schema): Schema
     {
         return $schema
             ->columns(1)
             ->components([
-                Section::make('Informasi Hutang')
+                Section::make('Informasi AP')
+                    ->columns(2)
                     ->schema([
-                        Select::make('supplier_id')
-                            ->relationship('supplier', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->required(),
-                        TextInput::make('ap_number')
-                            ->required()
-                            ->maxLength(255)
-                            ->default(fn () => 'AP-'.now()->format('Ymd').'-'.Str::upper(Str::random(4))),
-                        Select::make('goods_receipt_id')
-                            ->relationship('goodsReceipt', 'receipt_number')
-                            ->searchable()
-                            ->preload()
-                            ->label('Goods Receipt'),
-                        TextInput::make('total_amount')
-                            ->required()
-                            ->numeric()
-                            ->prefix('Rp')
-                            ->maxValue(99999999999999),
-                        TextInput::make('amount_paid')
-                            ->required()
-                            ->numeric()
-                            ->prefix('Rp')
-                            ->default(0)
-                            ->maxValue(99999999999999),
-                        DatePicker::make('due_date')
-                            ->required()
-                            ->default(now()->addDays(30)),
-                        Select::make('status')
-                            ->options([
+                        TextEntry::make('ap_number')
+                            ->label('No. AP')
+                            ->weight(FontWeight::Bold)
+                            ->size(TextSize::Large),
+                        TextEntry::make('status')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'unpaid' => 'danger',
+                                'partial' => 'warning',
+                                'paid' => 'success',
+                                default => 'gray',
+                            })
+                            ->formatStateUsing(fn (string $state): string => match ($state) {
                                 'unpaid' => 'Belum Dibayar',
                                 'partial' => 'Dibayar Sebagian',
                                 'paid' => 'Lunas',
+                                default => $state,
+                            }),
+                        TextEntry::make('supplier.name')
+                            ->label('Supplier'),
+                        TextEntry::make('due_date')
+                            ->date()
+                            ->color(fn (AccountPayable $record): string => $record->due_date->isPast() && $record->balance > 0 ? 'danger' : 'default'),
+                    ]),
+
+                Section::make('Detail Keuangan')
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('total_amount')
+                            ->label('Total')
+                            ->money('IDR'),
+                        TextEntry::make('amount_paid')
+                            ->label('Terbayar')
+                            ->money('IDR'),
+                        TextEntry::make('balance')
+                            ->label('Sisa')
+                            ->money('IDR')
+                            ->color(fn (AccountPayable $record): string => $record->balance > 0 ? 'danger' : 'success'),
+                    ]),
+
+                Section::make('Dokumen Sumber')
+                    ->columns(2)
+                    ->schema([
+                        TextEntry::make('goodsReceipt.receipt_number')
+                            ->label('No. GR'),
+                        TextEntry::make('goodsReceipt.purchaseOrder.order_number')
+                            ->label('No. PO'),
+                        TextEntry::make('goodsReceipt.status')
+                            ->label('Status GR')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'completed' => 'success',
+                                'draft' => 'warning',
+                                'cancelled' => 'danger',
+                                default => 'gray',
+                            }),
+                        TextEntry::make('goodsReceipt.purchaseOrder.status')
+                            ->label('Status PO')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'ordered' => 'info',
+                                'partially_received' => 'warning',
+                                'received' => 'success',
+                                'cancelled' => 'danger',
+                                default => 'gray',
+                            }),
+                        TextEntry::make('goodsReceipt.received_at')
+                            ->label('Tgl Terima')
+                            ->date(),
+                        TextEntry::make('goodsReceipt.purchaseOrder.expected_at')
+                            ->label('Tgl Diharapkan')
+                            ->date(),
+                    ]),
+
+                Section::make('Riwayat Pembayaran')
+                    ->schema([
+                        RepeatableEntry::make('payments')
+                            ->schema([
+                                TextEntry::make('payment_date')
+                                    ->label('Tgl')
+                                    ->date(),
+                                TextEntry::make('amount')
+                                    ->label('Jumlah')
+                                    ->money('IDR'),
+                                TextEntry::make('payment_method')
+                                    ->label('Metode'),
+                                TextEntry::make('reference')
+                                    ->label('Referensi')
+                                    ->placeholder('No. Referensi transfer / ID transaksi QRIS / dll.'),
+                                TextEntry::make('notes')
+                                    ->label('Catatan'),
                             ])
-                            ->required()
-                            ->default('unpaid'),
-                        Textarea::make('notes')
-                            ->rows(3),
-                    ])->columns(2),
+                            ->columns(5),
+                    ]),
+
+                Section::make('Informasi Lain')
+                    ->columns(2)
+                    ->schema([
+                        TextEntry::make('created_at')
+                            ->label('Dibuat')
+                            ->dateTime(),
+                        TextEntry::make('creator.name')
+                            ->label('Oleh'),
+                        TextEntry::make('notes')
+                            ->label('Catatan')
+                            ->columnSpanFull()
+                            ->visible(fn (?string $state): bool => filled($state)),
+                    ]),
             ]);
     }
 
@@ -145,24 +210,17 @@ class AccountPayableResource extends Resource
                 SelectFilter::make('supplier_id')
                     ->relationship('supplier', 'name'),
             ])
-            ->defaultSort('created_at', 'desc')
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+                ViewAction::make(),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getPages(): array
     {
         return [
             'index' => ListAccountPayables::route('/'),
-            'create' => CreateAccountPayable::route('/create'),
-            'edit' => EditAccountPayable::route('/{record}/edit'),
+            'view' => ViewAccountPayable::route('/{record}/view'),
         ];
     }
 }

@@ -5,31 +5,31 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class StockAdjustmentItem extends Model
+class SaleItem extends Model
 {
     protected $fillable = [
-        'stock_adjustment_id',
+        'sale_id',
         'product_id',
         'product_variant_id',
-        'expected_qty',
-        'actual_qty',
-        'difference',
+        'qty',
         'unit_price',
+        'discount',
+        'subtotal',
     ];
 
     protected function casts(): array
     {
         return [
-            'expected_qty' => 'decimal:2',
-            'actual_qty' => 'decimal:2',
-            'difference' => 'decimal:2',
+            'qty' => 'decimal:2',
             'unit_price' => 'decimal:2',
+            'discount' => 'decimal:2',
+            'subtotal' => 'decimal:2',
         ];
     }
 
-    public function stockAdjustment(): BelongsTo
+    public function sale(): BelongsTo
     {
-        return $this->belongsTo(StockAdjustment::class);
+        return $this->belongsTo(Sale::class);
     }
 
     public function product(): BelongsTo

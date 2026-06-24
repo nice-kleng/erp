@@ -90,14 +90,25 @@ class StockTransferResource extends Resource
                                     ->relationship('product', 'name')
                                     ->searchable()
                                     ->preload()
-                                    ->required(),
+                                    ->required()
+                                    ->live()
+                                    ->afterStateUpdated(function ($state, $set) {
+                                        $set('product_variant_id', null);
+                                    }),
+                                Select::make('product_variant_id')
+                                    ->label('Variant')
+                                    ->relationship('productVariant', 'name', fn ($query, $get) => $query->where('product_id', (int) ($get('product_id') ?? 0))
+                                    )
+                                    ->searchable()
+                                    ->preload()
+                                    ->hidden(fn ($get): bool => ! $get('product_id')),
                                 TextInput::make('qty')
                                     ->label('Qty')
                                     ->required()
                                     ->numeric()
                                     ->default(1),
                             ])
-                            ->columns(2)
+                            ->columns(3)
                             ->defaultItems(1),
                     ]),
             ]);

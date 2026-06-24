@@ -16,6 +16,14 @@ class GoodsReceiptItem extends Model
         'unit_price',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'qty_received' => 'decimal:2',
+            'unit_price' => 'decimal:2',
+        ];
+    }
+
     public function goodsReceipt(): BelongsTo
     {
         return $this->belongsTo(GoodsReceipt::class);

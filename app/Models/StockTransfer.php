@@ -19,6 +19,14 @@ class StockTransfer extends Model
         'created_by',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'sent_at' => 'date',
+            'received_at' => 'date',
+        ];
+    }
+
     public function fromStore(): BelongsTo
     {
         return $this->belongsTo(Store::class, 'from_store_id');

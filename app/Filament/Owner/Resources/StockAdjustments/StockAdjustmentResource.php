@@ -75,7 +75,18 @@ class StockAdjustmentResource extends Resource
                                     ->searchable()
                                     ->preload()
                                     ->required()
-                                    ->label('Produk'),
+                                    ->label('Produk')
+                                    ->live()
+                                    ->afterStateUpdated(function ($state, $set) {
+                                        $set('product_variant_id', null);
+                                    }),
+                                Select::make('product_variant_id')
+                                    ->label('Variant')
+                                    ->relationship('productVariant', 'name', fn ($query, $get) => $query->where('product_id', (int) ($get('product_id') ?? 0))
+                                    )
+                                    ->searchable()
+                                    ->preload()
+                                    ->hidden(fn ($get): bool => ! $get('product_id')),
                                 TextInput::make('expected_qty')
                                     ->label('Stok Sistem')
                                     ->numeric(),
@@ -93,8 +104,12 @@ class StockAdjustmentResource extends Resource
                                     ->label('Selisih')
                                     ->numeric()
                                     ->readOnly(),
+                                TextInput::make('unit_price')
+                                    ->label('Harga')
+                                    ->numeric()
+                                    ->prefix('Rp'),
                             ])
-                            ->columns(4)
+                            ->columns(3)
                             ->defaultItems(1),
                     ]),
             ]);

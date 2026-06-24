@@ -4,9 +4,11 @@ namespace App\Filament\Owner\Resources\GoodsReceipts\Pages;
 
 use App\Filament\Owner\Resources\GoodsReceipts\GoodsReceiptResource;
 use App\Models\GoodsReceipt;
+use App\Models\PurchaseOrderItem;
 use App\Models\StockMovement;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class EditGoodsReceipt extends EditRecord
@@ -20,20 +22,42 @@ class EditGoodsReceipt extends EditRecord
         ];
     }
 
+    public function getAvailablePoItems(): array
+    {
+        $poId = $this->data['purchase_order_id'] ?? 0;
+        $currentIds = $this->record?->items->pluck('purchase_order_item_id')->filter()->toArray() ?? [];
+
+        return PurchaseOrderItem::where('purchase_order_id', $poId)
+            ->where(function ($q) use ($currentIds) {
+                $q->whereColumn('qty_received', '<', 'qty_ordered');
+                if (! empty($currentIds)) {
+                    $q->orWhereIn('id', $currentIds);
+                }
+            })
+            ->with('product', 'productVariant')
+            ->get()
+            ->mapWithKeys(fn ($item) => [
+                $item->id => $item->product->name
+                    .($item->productVariant ? ' - '.$item->productVariant->name : '')
+                    .' (Qty: '.$item->qty_ordered.', Sisa: '.($item->qty_ordered - $item->qty_received).')',
+            ])
+            ->toArray();
+    }
+
     protected function afterSave(): void
     {
         $record = $this->record;
+        $record->refresh();
 
         StockMovement::where('reference_type', 'goods_receipt')
             ->where('reference_id', $record->id)
             ->delete();
 
         if ($record->status === 'completed') {
-            $this->syncGoodsReceipt($record);
-
-            if (! $record->accountPayable()->exists()) {
-                $this->createAccountPayable($record);
-            }
+            DB::transaction(function () use ($record) {
+                $this->syncGoodsReceipt($record);
+                $this->upsertAccountPayable($record);
+            });
         }
     }
 
@@ -79,19 +103,34 @@ class EditGoodsReceipt extends EditRecord
         };
     }
 
-    private function createAccountPayable(GoodsReceipt $record): void
+    private function upsertAccountPayable(GoodsReceipt $record): void
     {
-        $total = $record->items->sum(fn ($item) => $item->qty_received * $item->unit_price);
+        $grSubtotal = $record->items->sum(fn ($item) => $item->qty_received * $item->unit_price);
+        $po = $record->purchaseOrder;
+        $poSubtotal = (float) $po->subtotal;
+        $poTotal = (float) ($poSubtotal - $po->discount + $po->tax);
 
-        $record->accountPayable()->create([
-            'store_id' => $record->store_id,
-            'supplier_id' => $record->purchaseOrder->supplier_id,
-            'ap_number' => 'AP-'.now()->format('Ymd').'-'.Str::upper(Str::random(4)),
-            'total_amount' => $total,
-            'amount_paid' => 0,
-            'due_date' => now()->addDays(30),
-            'status' => 'unpaid',
-            'created_by' => auth()->id(),
-        ]);
+        $totalAmount = $poSubtotal > 0
+            ? round(($grSubtotal / $poSubtotal) * $poTotal)
+            : $grSubtotal;
+
+        $ap = $record->accountPayable;
+
+        if ($ap) {
+            $ap->update([
+                'total_amount' => $totalAmount,
+            ]);
+        } else {
+            $record->accountPayable()->create([
+                'store_id' => $record->store_id,
+                'supplier_id' => $po->supplier_id,
+                'ap_number' => 'AP-'.now()->format('Ymd').'-'.Str::upper(Str::random(4)),
+                'total_amount' => $totalAmount,
+                'amount_paid' => 0,
+                'due_date' => now()->addDays(30),
+                'status' => 'unpaid',
+                'created_by' => auth()->id(),
+            ]);
+        }
     }
 }

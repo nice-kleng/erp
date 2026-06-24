@@ -21,6 +21,15 @@ class AccountPayable extends Model
         'created_by',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'due_date' => 'date',
+            'total_amount' => 'decimal:2',
+            'amount_paid' => 'decimal:2',
+        ];
+    }
+
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);

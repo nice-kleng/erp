@@ -17,6 +17,13 @@ class StockAdjustment extends Model
         'created_by',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'adjusted_at' => 'date',
+        ];
+    }
+
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);

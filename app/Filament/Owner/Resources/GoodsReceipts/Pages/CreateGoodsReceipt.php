@@ -4,8 +4,11 @@ namespace App\Filament\Owner\Resources\GoodsReceipts\Pages;
 
 use App\Filament\Owner\Resources\GoodsReceipts\GoodsReceiptResource;
 use App\Models\GoodsReceipt;
+use App\Models\PurchaseOrderItem;
 use App\Models\StockMovement;
+use Filament\Facades\Filament;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class CreateGoodsReceipt extends CreateRecord
@@ -14,21 +17,41 @@ class CreateGoodsReceipt extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $data['store_id'] = Filament::getTenant()->id;
         $data['created_by'] = auth()->id();
 
         return $data;
     }
 
+    public function getAvailablePoItems(): array
+    {
+        $poId = $this->data['purchase_order_id'] ?? 0;
+
+        return PurchaseOrderItem::where('purchase_order_id', $poId)
+            ->whereColumn('qty_received', '<', 'qty_ordered')
+            ->with('product', 'productVariant')
+            ->get()
+            ->mapWithKeys(fn ($item) => [
+                $item->id => $item->product->name
+                    .($item->productVariant ? ' - '.$item->productVariant->name : '')
+                    .' (Qty: '.$item->qty_ordered.', Sisa: '.($item->qty_ordered - $item->qty_received).')',
+            ])
+            ->toArray();
+    }
+
     protected function afterCreate(): void
     {
         $record = $this->record;
+        $record->refresh();
 
         if ($record->status !== 'completed') {
             return;
         }
 
-        $this->syncGoodsReceipt($record);
-        $this->createAccountPayable($record);
+        DB::transaction(function () use ($record) {
+            $this->syncGoodsReceipt($record);
+            $this->upsertAccountPayable($record);
+        });
     }
 
     private function syncGoodsReceipt(GoodsReceipt $record): void
@@ -73,15 +96,22 @@ class CreateGoodsReceipt extends CreateRecord
         };
     }
 
-    private function createAccountPayable(GoodsReceipt $record): void
+    private function upsertAccountPayable(GoodsReceipt $record): void
     {
-        $total = $record->items->sum(fn ($item) => $item->qty_received * $item->unit_price);
+        $grSubtotal = $record->items->sum(fn ($item) => $item->qty_received * $item->unit_price);
+        $po = $record->purchaseOrder;
+        $poSubtotal = (float) $po->subtotal;
+        $poTotal = (float) ($poSubtotal - $po->discount + $po->tax);
+
+        $totalAmount = $poSubtotal > 0
+            ? round(($grSubtotal / $poSubtotal) * $poTotal)
+            : $grSubtotal;
 
         $record->accountPayable()->create([
             'store_id' => $record->store_id,
-            'supplier_id' => $record->purchaseOrder->supplier_id,
+            'supplier_id' => $po->supplier_id,
             'ap_number' => 'AP-'.now()->format('Ymd').'-'.Str::upper(Str::random(4)),
-            'total_amount' => $total,
+            'total_amount' => $totalAmount,
             'amount_paid' => 0,
             'due_date' => now()->addDays(30),
             'status' => 'unpaid',

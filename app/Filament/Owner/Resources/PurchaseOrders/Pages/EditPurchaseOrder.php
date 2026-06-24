@@ -10,6 +10,14 @@ class EditPurchaseOrder extends EditRecord
 {
     protected static string $resource = PurchaseOrderResource::class;
 
+    public function syncRingkasan(): void
+    {
+        $items = $this->data['items'] ?? [];
+        $subtotal = collect($items)->sum(fn ($item) => (float) ($item['subtotal'] ?? 0));
+        $this->data['subtotal'] = $subtotal;
+        $this->data['total'] = $subtotal - (float) ($this->data['discount'] ?? 0) + (float) ($this->data['tax'] ?? 0);
+    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -17,17 +25,12 @@ class EditPurchaseOrder extends EditRecord
         ];
     }
 
-    protected function afterSave(): void
+    protected function mutateFormDataBeforeSave(array $data): array
     {
-        $subtotal = $this->record->items->sum('subtotal');
-        $discount = (float) ($this->data['discount'] ?? 0);
-        $tax = (float) ($this->data['tax'] ?? 0);
+        $items = $data['items'] ?? [];
+        $data['subtotal'] = collect($items)->sum('subtotal');
+        $data['total'] = $data['subtotal'] - ($data['discount'] ?? 0) + ($data['tax'] ?? 0);
 
-        $this->record->update([
-            'subtotal' => $subtotal,
-            'discount' => $discount,
-            'tax' => $tax,
-            'total' => $subtotal - $discount + $tax,
-        ]);
+        return $data;
     }
 }

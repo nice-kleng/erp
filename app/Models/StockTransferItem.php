@@ -14,6 +14,13 @@ class StockTransferItem extends Model
         'qty',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'qty' => 'decimal:2',
+        ];
+    }
+
     public function stockTransfer(): BelongsTo
     {
         return $this->belongsTo(StockTransfer::class);
