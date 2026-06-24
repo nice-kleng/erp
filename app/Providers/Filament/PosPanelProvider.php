@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pos\Pages\KasirPage;
 use App\Models\Store;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -34,6 +35,9 @@ class PosPanelProvider extends PanelProvider
             ->tenantRoutePrefix('store')
             ->tenantMenu(false)
             ->discoverResources(in: app_path('Filament/Pos/Resources'), for: 'App\Filament\Pos\Resources')
+            ->pages([
+                KasirPage::class,
+            ])
             ->discoverPages(in: app_path('Filament/Pos/Pages'), for: 'App\Filament\Pos\Pages')
             ->discoverWidgets(in: app_path('Filament/Pos/Widgets'), for: 'App\Filament\Pos\Widgets')
             ->widgets([

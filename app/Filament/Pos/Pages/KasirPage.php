@@ -11,12 +11,18 @@ use App\Models\SaleItem;
 use App\Models\StockMovement;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
+use Filament\Panel;
 
 class KasirPage extends Page
 {
     protected string $view = 'filament.pos.pages.kasir';
 
-    protected static string $layout = 'filament-panels::components.layout.base';
+    protected static string $layout = 'layouts.pos';
+
+    public static function getSlug(?Panel $panel = null): string
+    {
+        return 'kasir';
+    }
 
     public static function getNavigationSort(): ?int
     {
