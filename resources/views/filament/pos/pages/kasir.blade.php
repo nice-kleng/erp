@@ -1,4 +1,4 @@
-<div class="flex gap-5 h-full">
+<div class="flex gap-5 h-screen p-5">
     {{-- Left: Product Area --}}
     <div class="flex-1 min-w-0 flex flex-col gap-4">
         {{-- Search + Categories --}}
