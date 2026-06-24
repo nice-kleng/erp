@@ -16,7 +16,7 @@ class KasirPage extends Page
 {
     protected string $view = 'filament.pos.pages.kasir';
 
-    protected static string $layout = 'layouts.pos';
+    protected static string $layout = 'filament-panels::components.layout.base';
 
     public static function getNavigationSort(): ?int
     {
