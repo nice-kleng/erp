@@ -115,7 +115,7 @@
                                     @endif
                                 </div>
                                 <div class="mt-3 flex items-center justify-between">
-                                    <p class="text-[15px] font-black text-primary-600 dark:text-primary-400 tracking-tight">
+                                    <p class="text-[15px] font-black text-primary-600 dark:text-white tracking-tight">
                                         Rp {{ number_format($product->selling_price, 0, ',', '.') }}
                                     </p>
                                     <div class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-primary-500 group-hover:text-white transition-colors duration-300">
@@ -232,7 +232,7 @@
                                                 class="font-black text-[15px] text-slate-900 dark:text-white hover:text-primary-500 dark:hover:text-primary-400 transition-colors decoration-dashed decoration-slate-300 underline-offset-4 hover:underline"
                                                 title="Ubah Diskon Item"
                                             >
-                                                Rp {{ number_format($item['subtotal'], 0, ',', '.') }}
+                                                <span class="dark:text-white">Rp {{ number_format($item['subtotal'], 0, ',', '.') }}</span>
                                             </button>
                                             @if((float)($item['discount'] ?? 0) > 0)
                                                 <div class="text-[11px] font-bold text-rose-500 bg-rose-50 dark:bg-rose-500/10 inline-block px-1.5 py-0.5 rounded mt-0.5">
@@ -259,7 +259,7 @@
                     </svg>
                 </div>
                 <div class="flex-1">
-                    <x-filament::input.select wire:model.live="customerId" class="text-sm border-slate-200 shadow-sm focus:ring-primary-500">
+                    <x-filament::input.select wire:model.live="customerId" class="text-sm dark:bg-slate-800 dark:text-slate-100 dark:border-slate-600 border-slate-200 shadow-sm focus:ring-primary-500">
                         <option value="">Pelanggan Umum</option>
                         @foreach($this->customers as $customer)
                             <option value="{{ $customer->id }}">{{ $customer->name }}</option>
