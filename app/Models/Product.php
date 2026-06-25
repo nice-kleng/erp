@@ -26,6 +26,7 @@ class Product extends Model
         'selling_price',
         'has_variants',
         'is_active',
+        'type',
     ];
 
     protected function casts(): array
