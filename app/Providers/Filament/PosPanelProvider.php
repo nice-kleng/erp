@@ -2,12 +2,15 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Owner\Resources\CustomerResource;
+use App\Filament\Owner\Resources\ProductResource;
 use App\Filament\Pos\Pages\KasirPage;
 use App\Models\Store;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -34,8 +37,13 @@ class PosPanelProvider extends PanelProvider
             ->tenant(Store::class)
             ->tenantRoutePrefix('store')
             ->tenantMenu(false)
+            ->resources([
+                ProductResource::class,
+                CustomerResource::class,
+            ])
             ->discoverResources(in: app_path('Filament/Pos/Resources'), for: 'App\Filament\Pos\Resources')
             ->pages([
+                Dashboard::class,
                 KasirPage::class,
             ])
             ->discoverPages(in: app_path('Filament/Pos/Pages'), for: 'App\Filament\Pos\Pages')
