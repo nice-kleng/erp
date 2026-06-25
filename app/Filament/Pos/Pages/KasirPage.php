@@ -270,9 +270,17 @@ class KasirPage extends Page
     {
         $total = $this->cart_total;
 
-        $this->validate([
+        $rules = [
             'paymentMethod' => 'required|in:cash,transfer,qris,debit,credit_card,credit',
             'amountPaid' => $this->paymentMethod === 'credit' ? 'nullable' : 'required|numeric|min:'.$total,
+        ];
+
+        if ($this->paymentMethod === 'credit') {
+            $rules['customerId'] = 'required';
+        }
+
+        $this->validate($rules, [
+            'customerId.required' => 'Pilih pelanggan terlebih dahulu untuk pembayaran Bon/Kredit.',
         ]);
 
         $storeId = Filament::getTenant()->id;

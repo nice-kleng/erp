@@ -417,6 +417,9 @@
                         <div class="px-5 py-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-2xl text-center">
                             <p class="text-sm font-bold text-orange-600 dark:text-orange-400">Pembayaran Bon/Kredit</p>
                             <p class="text-xs text-orange-500 dark:text-orange-400 mt-1">Piutang akan dicatat dan ditagih nanti</p>
+                            @if(!$customerId)
+                                <p class="text-xs font-bold text-rose-500 mt-2">⚠️ Pilih pelanggan terlebih dahulu di keranjang</p>
+                            @endif
                         </div>
                     @else
                         <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">Jumlah Dibayar (Rp)</label>
