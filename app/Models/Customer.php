@@ -19,12 +19,14 @@ class Customer extends Model
         'email',
         'address',
         'is_active',
+        'ar_due_days',
     ];
 
     protected function casts(): array
     {
         return [
             'is_active' => 'boolean',
+            'ar_due_days' => 'integer',
         ];
     }
 

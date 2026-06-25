@@ -63,4 +63,9 @@ class Sale extends Model
         return $this->hasMany(StockMovement::class, 'reference_id')
             ->where('reference_type', 'sale');
     }
+
+    public function accountReceivable(): HasOne
+    {
+        return $this->hasOne(AccountReceivable::class);
+    }
 }

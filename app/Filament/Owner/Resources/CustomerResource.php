@@ -55,6 +55,12 @@ class CustomerResource extends Resource
                             ->rows(3),
                         Toggle::make('is_active')
                             ->default(true),
+                        TextInput::make('ar_due_days')
+                            ->label('Jatuh Tempo (hari)')
+                            ->numeric()
+                            ->default(7)
+                            ->suffix('hari')
+                            ->helperText('Default jatuh tempo piutang untuk customer ini'),
                     ])->columns(2),
             ]);
     }
@@ -72,6 +78,11 @@ class CustomerResource extends Resource
                     ->searchable(),
                 IconColumn::make('is_active')
                     ->boolean(),
+                TextColumn::make('ar_due_days')
+                    ->label('Jatuh Tempo')
+                    ->suffix(' hari')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

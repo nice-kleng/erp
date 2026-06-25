@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Owner\Resources\CustomerResource;
 use App\Filament\Owner\Resources\ProductResource;
 use App\Filament\Pos\Pages\KasirPage;
+use App\Filament\Pos\Resources\ArPaymentResource;
 use App\Models\Store;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -40,6 +41,7 @@ class PosPanelProvider extends PanelProvider
             ->resources([
                 ProductResource::class,
                 CustomerResource::class,
+                ArPaymentResource::class,
             ])
             ->discoverResources(in: app_path('Filament/Pos/Resources'), for: 'App\Filament\Pos\Resources')
             ->pages([

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pos\Pages;
 
+use App\Models\AccountReceivable;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Product;
@@ -12,6 +13,7 @@ use App\Models\StockMovement;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Panel;
+use Illuminate\Support\Str;
 
 class KasirPage extends Page
 {
@@ -269,11 +271,16 @@ class KasirPage extends Page
         $total = $this->cart_total;
 
         $this->validate([
-            'paymentMethod' => 'required|in:cash,transfer,qris,debit,credit_card',
-            'amountPaid' => 'required|numeric|min:'.$total,
+            'paymentMethod' => 'required|in:cash,transfer,qris,debit,credit_card,credit',
+            'amountPaid' => $this->paymentMethod === 'credit' ? 'nullable' : 'required|numeric|min:'.$total,
         ]);
 
         $storeId = Filament::getTenant()->id;
+
+        if ($this->paymentMethod === 'credit') {
+            $this->amountPaid = 0;
+        }
+
         $change = (float) ($this->amountPaid ?? 0) - $total;
 
         $invoiceNumber = $this->generateInvoiceNumber();
@@ -314,6 +321,23 @@ class KasirPage extends Page
                 'reference_type' => 'sale',
                 'reference_id' => $sale->id,
                 'description' => 'Penjualan: '.$invoiceNumber,
+                'created_by' => auth()->id(),
+            ]);
+        }
+
+        if ($this->paymentMethod === 'credit') {
+            $customer = $sale->customer;
+            $dueDays = $customer?->ar_due_days ?? 7;
+
+            AccountReceivable::create([
+                'store_id' => $storeId,
+                'customer_id' => $this->customerId,
+                'sale_id' => $sale->id,
+                'ar_number' => 'AR-'.now()->format('Ymd').'-'.Str::upper(Str::random(4)),
+                'total_amount' => $total,
+                'amount_paid' => 0,
+                'due_date' => now()->addDays($dueDays),
+                'status' => 'unpaid',
                 'created_by' => auth()->id(),
             ]);
         }

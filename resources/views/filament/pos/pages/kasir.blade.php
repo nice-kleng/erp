@@ -388,6 +388,7 @@
                                 'qris' => ['QRIS', 'M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z', 'from-violet-400 to-violet-500'],
                                 'debit' => ['Debit', 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z', 'from-amber-400 to-amber-500'],
                                 'credit_card' => ['Kredit', 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'from-rose-400 to-rose-500'],
+                                'credit' => ['Bon', 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'from-orange-400 to-orange-500'],
                             ];
                         @endphp
                         @foreach($methods as $val => [$label, $path, $gradient])
@@ -412,24 +413,31 @@
 
                 {{-- Amount Paid --}}
                 <div class="mb-7">
-                    <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">Jumlah Dibayar (Rp)</label>
-                    <div class="relative group">
-                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-lg text-slate-400 font-bold group-focus-within:text-primary-500 transition-colors">Rp</span>
-                        <input
-                            type="number"
-                            wire:model.live="amountPaid"
-                            class="w-full pl-12 pr-4 py-4 rounded-2xl border-0 ring-1 ring-inset ring-slate-200 dark:ring-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-2xl font-black text-right focus:ring-2 focus:ring-inset focus:ring-primary-500 outline-none transition-all shadow-inner"
-                            placeholder="0"
-                            min="{{ $this->cart_total }}"
-                            step="100"
-                            autofocus
-                        />
-                    </div>
-                    @if($this->change_due > 0)
-                        <div class="mt-3 flex items-center justify-between px-5 py-3.5 bg-gradient-to-r from-emerald-500/10 to-emerald-500/5 border border-emerald-500/20 rounded-2xl animate-in fade-in slide-in-from-top-2">
-                            <span class="text-sm font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Kembalian</span>
-                            <span class="text-xl font-black text-emerald-600 dark:text-emerald-400">Rp {{ number_format($this->change_due, 0, ',', '.') }}</span>
+                    @if($paymentMethod === 'credit')
+                        <div class="px-5 py-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-2xl text-center">
+                            <p class="text-sm font-bold text-orange-600 dark:text-orange-400">Pembayaran Bon/Kredit</p>
+                            <p class="text-xs text-orange-500 dark:text-orange-400 mt-1">Piutang akan dicatat dan ditagih nanti</p>
                         </div>
+                    @else
+                        <label class="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">Jumlah Dibayar (Rp)</label>
+                        <div class="relative group">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-lg text-slate-400 font-bold group-focus-within:text-primary-500 transition-colors">Rp</span>
+                            <input
+                                type="number"
+                                wire:model.live="amountPaid"
+                                class="w-full pl-12 pr-4 py-4 rounded-2xl border-0 ring-1 ring-inset ring-slate-200 dark:ring-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-2xl font-black text-right focus:ring-2 focus:ring-inset focus:ring-primary-500 outline-none transition-all shadow-inner"
+                                placeholder="0"
+                                min="{{ $this->cart_total }}"
+                                step="100"
+                                autofocus
+                            />
+                        </div>
+                        @if($this->change_due > 0)
+                            <div class="mt-3 flex items-center justify-between px-5 py-3.5 bg-gradient-to-r from-emerald-500/10 to-emerald-500/5 border border-emerald-500/20 rounded-2xl animate-in fade-in slide-in-from-top-2">
+                                <span class="text-sm font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Kembalian</span>
+                                <span class="text-xl font-black text-emerald-600 dark:text-emerald-400">Rp {{ number_format($this->change_due, 0, ',', '.') }}</span>
+                            </div>
+                        @endif
                     @endif
                 </div>
 
